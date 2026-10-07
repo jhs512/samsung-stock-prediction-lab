@@ -1,0 +1,226 @@
+{
+  "snapshot_sha256": "3727d13a6f793644f9d8ef1922168a876da273dc10bfa6a375bd8c7cfa94b228",
+  "rows": 1905,
+  "first": "2019-01-02",
+  "last": "2026-10-07",
+  "nulls": 0,
+  "duplicates": 0,
+  "ohlc_consistent": true,
+  "crosscheck_url": "https://query1.finance.yahoo.com/v8/finance/chart/005930.KS?period1=1546300800&period2=1791417600&interval=1d",
+  "checked_at_utc": "2026-10-07T22:36:56.902195+00:00",
+  "crosscheck": {
+    "status": "completed",
+    "overlap_rows": 1902,
+    "different_closes": 40,
+    "different_closes_2026": 14,
+    "naver_only_dates": [
+      "2022-01-03",
+      "2022-05-09",
+      "2025-09-19"
+    ],
+    "yahoo_only_dates": [],
+    "differences": [
+      {
+        "date": "2020-03-09",
+        "close": 54200,
+        "yahoo_close": 56500.0
+      },
+      {
+        "date": "2020-03-12",
+        "close": 50800,
+        "yahoo_close": 52100.0
+      },
+      {
+        "date": "2022-01-26",
+        "close": 73300,
+        "yahoo_close": 74000.0
+      },
+      {
+        "date": "2022-02-08",
+        "close": 73500,
+        "yahoo_close": 73000.0
+      },
+      {
+        "date": "2022-02-09",
+        "close": 74700,
+        "yahoo_close": 73000.0
+      },
+      {
+        "date": "2022-02-21",
+        "close": 74200,
+        "yahoo_close": 74300.0
+      },
+      {
+        "date": "2022-02-22",
+        "close": 73400,
+        "yahoo_close": 74300.0
+      },
+      {
+        "date": "2022-02-23",
+        "close": 73000,
+        "yahoo_close": 74300.0
+      },
+      {
+        "date": "2022-02-28",
+        "close": 72100,
+        "yahoo_close": 71900.0
+      },
+      {
+        "date": "2022-03-04",
+        "close": 71500,
+        "yahoo_close": 72900.0
+      },
+      {
+        "date": "2022-03-10",
+        "close": 71200,
+        "yahoo_close": 69500.0
+      },
+      {
+        "date": "2022-03-15",
+        "close": 69500,
+        "yahoo_close": 70200.0
+      },
+      {
+        "date": "2022-03-17",
+        "close": 71200,
+        "yahoo_close": 70400.0
+      },
+      {
+        "date": "2023-01-25",
+        "close": 63400,
+        "yahoo_close": 63300.0
+      },
+      {
+        "date": "2023-01-26",
+        "close": 63900,
+        "yahoo_close": 63800.0
+      },
+      {
+        "date": "2023-01-31",
+        "close": 61000,
+        "yahoo_close": 61400.0
+      },
+      {
+        "date": "2023-02-01",
+        "close": 61800,
+        "yahoo_close": 61000.0
+      },
+      {
+        "date": "2023-02-03",
+        "close": 63800,
+        "yahoo_close": 63500.0
+      },
+      {
+        "date": "2023-02-07",
+        "close": 61900,
+        "yahoo_close": 62000.0
+      },
+      {
+        "date": "2023-02-09",
+        "close": 63000,
+        "yahoo_close": 63300.0
+      },
+      {
+        "date": "2023-02-10",
+        "close": 62800,
+        "yahoo_close": 62900.0
+      },
+      {
+        "date": "2024-02-15",
+        "close": 73000,
+        "yahoo_close": 73200.0
+      },
+      {
+        "date": "2024-10-14",
+        "close": 60800,
+        "yahoo_close": 59300.0
+      },
+      {
+        "date": "2024-11-07",
+        "close": 57500,
+        "yahoo_close": 57300.0
+      },
+      {
+        "date": "2025-09-18",
+        "close": 80500,
+        "yahoo_close": 80300.0
+      },
+      {
+        "date": "2025-10-02",
+        "close": 89000,
+        "yahoo_close": 89750.0
+      },
+      {
+        "date": "2026-03-27",
+        "close": 179700,
+        "yahoo_close": 180100.0
+      },
+      {
+        "date": "2026-04-01",
+        "close": 189600,
+        "yahoo_close": 189650.0
+      },
+      {
+        "date": "2026-09-14",
+        "close": 248500,
+        "yahoo_close": 249000.0
+      },
+      {
+        "date": "2026-09-15",
+        "close": 250500,
+        "yahoo_close": 248500.0
+      },
+      {
+        "date": "2026-09-17",
+        "close": 256000,
+        "yahoo_close": 252500.0
+      },
+      {
+        "date": "2026-09-18",
+        "close": 260000,
+        "yahoo_close": 261000.0
+      },
+      {
+        "date": "2026-09-21",
+        "close": 275000,
+        "yahoo_close": 274000.0
+      },
+      {
+        "date": "2026-09-22",
+        "close": 277500,
+        "yahoo_close": 276500.0
+      },
+      {
+        "date": "2026-09-23",
+        "close": 286500,
+        "yahoo_close": 285500.0
+      },
+      {
+        "date": "2026-09-29",
+        "close": 275000,
+        "yahoo_close": 272500.0
+      },
+      {
+        "date": "2026-09-30",
+        "close": 269500,
+        "yahoo_close": 268500.0
+      },
+      {
+        "date": "2026-10-01",
+        "close": 274500,
+        "yahoo_close": 276000.0
+      },
+      {
+        "date": "2026-10-06",
+        "close": 273000,
+        "yahoo_close": 272000.0
+      },
+      {
+        "date": "2026-10-07",
+        "close": 269000,
+        "yahoo_close": 268500.0
+      }
+    ],
+    "note": "Independent-provider agreement is a cross-check, not an exchange-grade certification. Naver remains frozen input; no substitutions."
+  }
+}

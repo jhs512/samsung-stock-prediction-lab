@@ -1,0 +1,73 @@
+{
+  "purpose": "Samsung Electronics only: test TeddyNote-style analog forecasts of next 20 trading-day cumulative price return",
+  "reference": "https://github.com/teddylee777/stock-pattern/blob/main/pattern.py",
+  "data": "Frozen Naver daily prices 2019-01-02 through 2026-10-07; no interpolation or synthetic data",
+  "horizon": 20,
+  "validation_years": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "validation_library": "For each validation year, use only historical episodes whose 20-day outcomes finished before the first validation signal of that year. Freeze this library throughout the year.",
+  "validation_queries": "Signal dates in validation year, with full 20-day outcome also inside that year; common minimum 100-day observed history for all configurations",
+  "test_year": 2026,
+  "test_library": "All eligible episodes with outcome before first 2026 signal; frozen, excludes every 2026 outcome",
+  "lookbacks": [
+    10,
+    20,
+    60,
+    100
+  ],
+  "retrievals": [
+    "threshold_0.90",
+    "threshold_0.95",
+    "threshold_0.98",
+    "top_3",
+    "top_5",
+    "top_10"
+  ],
+  "aggregations": [
+    "mean",
+    "median"
+  ],
+  "main_configurations": 48,
+  "threshold_max_neighbors": 20,
+  "minimum_neighbors": 3,
+  "normalization": "Min/max of each input window only, then unit L2 norm for cosine similarity; skip constant windows",
+  "episode_overlap": "Greedily select by descending similarity; selected historical input-plus-outcome episodes cannot overlap (endpoint separation >= lookback+20)",
+  "fallback": "If fewer than 3 independent episodes selected, predict the same common historical mean return as the mean baseline. Up probability also falls back to common historical up-rate.",
+  "direction_probability": "Laplace-smoothed neighbor up frequency (up_count+1)/(neighbor_count+2), only if sufficient neighbors",
+  "baselines": [
+    "zero return",
+    "common library mean return",
+    "common library median return",
+    "common historical up-rate for probability"
+  ],
+  "selection": "Lowest mean annual validation MAE over 2022-2025, all four years equal weight; ties resolved by deterministic configuration id. Freeze selection before test scoring. Test ranking cannot change selection.",
+  "diagnostic_reference": "One 12-day input/0.98 cosine/mean configuration with overlapping matches allowed, on historical-only episodes. This is illustrative and excluded from selection. Raw reference daily-mean return and future-inclusive search are corrected.",
+  "metrics": [
+    "MAE percentage points",
+    "RMSE percentage points",
+    "sign accuracy",
+    "balanced sign accuracy",
+    "prediction/return correlation",
+    "Brier score",
+    "coverage with >=3 nonoverlapping episodes",
+    "matched-only error versus baseline on identical dates"
+  ],
+  "dependence": "Daily 20-day targets overlap. Show first-date anchored nonoverlapping results and a paired moving-block bootstrap of mean-baseline MAE minus selected MAE, block length 20, 2000 repeats, seed 42. Treat uncertainty as exploratory, not proof.",
+  "test_status": "2026 prices and earlier model results were already inspected in prior experiments. This is a follow-up holdout comparison, not a newly blinded confirmatory test. No 2026 data will be used for current parameter selection.",
+  "latest_prediction": "Fixed selected configuration on latest completed snapshot close. Mark unverified future and explicitly identify fallback if no reliable analogs.",
+  "costs": "Forecast accuracy experiment, not an executable trading strategy; no transaction-profit claim",
+  "limitations": [
+    "price-only and single-stock",
+    "one partial test year",
+    "Naver price adjustment unspecified and dividend cash flows excluded",
+    "model selection uncertainty not fully captured by bootstrap",
+    "historical similarity is not a success probability"
+  ],
+  "budget_minutes": 30,
+  "locked_at_utc": "2026-10-07T22:36:58.318721+00:00",
+  "deadline_utc": "2026-10-07T23:05:11+00:00"
+}

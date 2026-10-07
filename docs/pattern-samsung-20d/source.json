@@ -1,0 +1,11 @@
+{
+  "provider": "Naver Finance daily OHLC",
+  "url": "https://api.finance.naver.com/siseJson.naver?symbol=005930&requestType=1&startTime=20190101&endTime=20261007&timeframe=day",
+  "retrieved_utc": "2026-10-07T20:26:48.592569+00:00",
+  "raw_sha256": "8f487723f0f6500298c9c365a09e91f7620790a78e160c5dd23fc114bff0fa53",
+  "first": "2019-01-02",
+  "last": "2026-10-07",
+  "rows": 1905,
+  "adjustment": "unspecified by API; no independent adjustment, dividend cash flows excluded",
+  "data_policy": "No interpolation; invalid, duplicate, nonpositive or inconsistent OHLC would fail"
+}
