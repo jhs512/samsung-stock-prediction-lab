@@ -1,4 +1,4 @@
-import json, pathlib, shutil
+import csv, json, pathlib, shutil
 import numpy as np
 from report_content import populate, adapt_html, make_report
 
@@ -17,6 +17,9 @@ for i in range(20):
  offsets.append(float((np.abs(y[i::20]-base)-np.abs(y[i::20]-p[i::20])).mean()*100))
 r['offset_gain_range_pp']=[min(offsets),max(offsets)]
 populate(r)
+with (OUT/'up_predicted_but_down.csv').open('w',encoding='utf-8',newline='') as file:
+ writer=csv.DictWriter(file,fieldnames=['qi','signal_date','outcome_date','prediction','actual_return','used_pattern','neighbor_count'])
+ writer.writeheader();writer.writerows(r['wrong_up_cases']['all'])
 (OUT/'report_data.json').write_text(json.dumps(r,ensure_ascii=False,separators=(',',':')),encoding='utf-8')
 payload=json.dumps(r,ensure_ascii=False,separators=(',',':')).replace('</','<\\/')
 html=r'''<!doctype html>

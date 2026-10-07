@@ -22,6 +22,11 @@ def populate(r):
  matched_y=y[used];matched_ok=np.sign(p[used])==np.sign(matched_y)
  r['matched_direction'].update({'actual_up':int((matched_y>0).sum()),'actual_down':int((matched_y<0).sum()),'always_down_correct':int((matched_y<0).sum()),'balanced_accuracy':float((matched_ok[matched_y>0].mean()+matched_ok[matched_y<0].mean())/2),'always_down_status':'Post-hoc diagnostic of class imbalance, not selected strategy or a claim of future performance.'})
  r['search_summary']={'found_days':sum(n>0 for n in e['counts']),'no_candidate_days':sum(n==0 for n in e['counts']),'one_or_two_candidate_days':sum(0<n<3 for n in e['counts']),'forecast_used_days':int(used.sum())}
+ wrong=[]
+ for i in np.flatnonzero((p>0)&(y<0)):
+  q=r['test_queries'][i]
+  wrong.append({'qi':int(i),'signal_date':r['daily_dates'][q],'outcome_date':r['daily_dates'][q+20],'prediction':float(p[i]),'actual_return':float(y[i]),'used_pattern':bool(used[i]),'neighbor_count':e['counts'][i]})
+ r['wrong_up_cases']={'all_up_forecasts':int((p>0).sum()),'pattern_up_forecasts':int(((p>0)&used).sum()),'pattern_up_but_down':sum(a['used_pattern'] for a in wrong),'all':wrong,'pattern_cases':[a for a in wrong if a['used_pattern']]}
  r['validation_better_count']=sum(a['validation']['mean_annual_mae_pp']<a['validation']['mean_annual_baseline_mae_pp'] for a in r['experiments'])
 
 def adapt_html(html,r):
@@ -53,7 +58,10 @@ def adapt_html(html,r):
   examples.append(f'''<div class="step"><h3>{title}</h3><p><b>{dates[q]}</b>까지 최근 {w}거래일 차트가 <b>{dates[j]}</b>까지의 과거 {w}거래일 차트와 유사도 <b>{a['cosine']*100:.2f}%</b>였습니다.</p><p>과거의 그 뒤 20거래일은 <b>{signed(a['historical_return'])}</b>, 이번 실제 결과는 <b>{signed(a['actual_return'])}</b>였습니다. 이번 결과일까지는 {dates[q+20]}입니다.</p><p>중간 수익률 경로의 상관은 {a['correlation']:.2f}, 평균 간격은 {a['path_mae_pp']:.2f}%p였습니다. {'같은 방향으로 끝났지만 중간 경로까지 동일하지는 않았습니다.' if key=='similar' else '높은 입력 유사도만으로 다음 움직임이 같다고 볼 수 없습니다.'}</p><button id="example-{key}">이 사례를 그래프로 보기</button></div>''')
  casehtml='<section><h2>“과거에 이런 패턴이 있었어?”</h2><p><b>있었습니다.</b> 아래는 선택 조건에서 실제로 검색된 과거 차트입니다. 닮은 모양이 같은 방향으로 이어진 사례와 반대로 이어진 사례를 나란히 볼 수 있습니다.</p><div class="grid2">'+''.join(examples)+'</div><p class="caption">이 두 예시는 미래 결과를 확인한 뒤 설명용으로 골랐습니다. 당시에는 어느 과거 사례를 따라갈지 알 수 없었습니다. 같은 방향 예시는 이후 경로 상관이 가장 높은 쌍, 반대 방향 예시는 이후 경로 오차가 가장 큰 쌍입니다. 원래 모델은 검색된 여러 사례의 결과를 합쳐 예측했습니다.</p></section>'
  casehtml=casehtml.replace('<p><b>있었습니다.</b>',f'<p>선택한 60일·98% 초과 기준으로는 166일 중 <b>{r["search_summary"]["found_days"]}일</b>에 과거 후보가 하나 이상 있었고, <b>{r["search_summary"]["no_candidate_days"]}일</b>에는 없었습니다. {r["search_summary"]["one_or_two_candidate_days"]}일은 후보 1~2개라서 검색에는 성공했지만, 예측용 최소 3개 규칙에는 못 미쳤습니다.</p><p><b>있었습니다.</b>')
- body=body.replace('<section id="interactive">',casehtml+'<section id="interactive">',1)
+ wu=r['wrong_up_cases']
+ rows=''.join(f'''<tr><td><button data-wrong-qi="{a['qi']}">{a['signal_date']} 보기</button></td><td>{a['outcome_date']}</td><td>{signed(a['prediction'])}</td><td>{signed(a['actual_return'])}</td><td>{a['neighbor_count']}</td></tr>''' for a in wu['pattern_cases'])
+ wronghtml=f'''<section><h2>상승을 예측했는데 실제로 하락한 경우만</h2><p><b>패턴으로 상승을 예측한 {wu['pattern_up_forecasts']}번 중 {wu['pattern_up_but_down']}번은 실제로 하락했습니다.</b> 상승 예측이 맞은 것은 {wu['pattern_up_forecasts']-wu['pattern_up_but_down']}번, 즉 {(wu['pattern_up_forecasts']-wu['pattern_up_but_down'])/wu['pattern_up_forecasts']*100:.1f}%였습니다. 아래는 요청하신 반대로 하락한 경우만 모은 표입니다.</p><div class="tablewrap"><table><thead><tr><th>예측 기준일 / 보기</th><th>20거래일 결과일</th><th>상승 예측</th><th>실제 하락</th><th>과거 사례 수</th></tr></thead><tbody>{rows}</tbody></table></div><p class="caption">7일의 기준일이 가까워 같은 하락 구간을 겹쳐 관측합니다. 서로 독립적인 7번의 사건이 아닙니다. 평균 대체값까지 포함하면 상승 예측→실제 하락은 총 {len(wu['all'])}건이며 그중 {len(wu['all'])-wu['pattern_up_but_down']}건은 패턴 예측이 아닙니다. <a href="up_predicted_but_down.csv" download>전체 해당 날짜 CSV</a></p></section>'''
+ body=body.replace('<section id="interactive">',casehtml+wronghtml+'<section id="interactive">',1)
  lateststatus=f'독립 후보는 {l["count"]}개입니다. '+(f'출력 {signed(l["return"])}는 사례들을 합친 값입니다.' if l['used_analogs'] else f'출력 {signed(l["return"])}는 과거 평균으로 대체한 값이며 패턴 예측이 아닙니다.')
  section('최근 자료를 넣으면?',f'''<section><h2>최근 자료를 넣으면?</h2><p><b>{l['date']} 종가 기준 선택 조건:</b> {lateststatus}</p><p class="muted">네이버 스냅샷 종가 {int(l['close']):,}원. 다음 20거래일 결과는 아직 관측되지 않았습니다. 현재 차트에서 후보가 없다면 “이 기준으로는 없다”고 답하면 됩니다. 평균 대체값은 매일 예측을 비교하기 위한 규칙이며, 과거 사례 검색의 답이 아닙니다.</p></section>''')
  # The copied template's data section includes figures that must use this stock's snapshot.
@@ -70,6 +78,7 @@ def adapt_html(html,r):
  html=html.replace("D.daily_dates[j-w+1]+'~'+D.daily_dates[j]", "(j===highlighted?'[예시 과거] ':'')+D.daily_dates[j-w+1]+'~'+D.daily_dates[j]")
  handlers='''
 for(const key of ['similar','opposite']){const btn=document.getElementById('example-'+key),ex=D.case_examples[key];if(btn&&ex)btn.addEventListener('click',()=>{ci=0;qi=ex.qi;highlighted=ex.j;render();document.getElementById('interactive').scrollIntoView({behavior:'smooth',block:'start'})});}
+for(const btn of document.querySelectorAll('button[data-wrong-qi]'))btn.addEventListener('click',()=>{ci=0;qi=Number(btn.dataset.wrongQi);highlighted=null;render();document.getElementById('interactive').scrollIntoView({behavior:'smooth',block:'start'})});
 '''
  pos=html.rfind('</script>');html=html[:pos]+handlers+html[pos:]
  return html
@@ -86,6 +95,7 @@ def make_report(r):
 - 방향 적중 {m['sign_accuracy']*100:.2f}% vs 항상 상승 {b['sign_accuracy']*100:.2f}%. 균형 적중 {m['balanced_sign_accuracy']*100:.2f}%, 하락 적중 {m['down_recall']*100:.2f}%.
 - 패턴 사용 날짜만: 방향 적중 {md['model_correct']}/{md['n']}, 동일 날짜 과거 평균 {md['mean_correct']}/{md['n']}.
 - 그 {md['n']}일의 실제 결과는 상승 {md['actual_up']}일·하락 {md['actual_down']}일. 모두 하락 가정 시 {100*md['always_down_correct']/md['n']:.2f}%가 맞는다. 모델의 패턴 사용 날짜 균형 적중은 {md['balanced_accuracy']*100:.2f}%. 모두 하락 비교는 사후 분포 설명이며 사전 선택한 전략이나 미래 성과 주장이 아니다.
+- 패턴 상승 예측 {r['wrong_up_cases']['pattern_up_forecasts']}번 중 실제 하락 {r['wrong_up_cases']['pattern_up_but_down']}번. 해당 날짜는 2026-07-02,03,06,07,08,09,10이고 목표 기간이 겹친다. 평균 대체 포함 전체 상승 예측→실제 하락 {len(r['wrong_up_cases']['all'])}건도 CSV로 제공한다.
 - MAE 개선의 20일 블록 부트스트랩 95% 구간 [{bs['interval95_pp'][0]:.6f}, {bs['interval95_pp'][1]:.6f}]%p. 0 포함, 선택 불확실성 전체를 포함하지 않은 탐색적 점검.
 
 같은 방향 예시: {dates[a['q']]}의 최근 {cfg['lookback']}거래일 vs {dates[a['j']]}까지의 과거 구간, 유사도 {a['cosine']*100:.2f}%. 이후 20일 과거 {a['historical_return']*100:+.2f}%, 실제 {a['actual_return']*100:+.2f}%. 경로 상관 {a['correlation']:.3f}, 경로 MAE {a['path_mae_pp']:.3f}%p. 중간 경로가 동일하다는 뜻은 아니다.
