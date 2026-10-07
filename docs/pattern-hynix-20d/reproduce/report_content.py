@@ -19,6 +19,8 @@ def populate(r):
   'opposite':max(opposite,key=lambda a:a['path_mae_pp']) if opposite else None,
   'selection_rule':'Same-direction pair with highest future-path correlation; opposite-direction pair with largest future-path MAE. Both use observed future only to explain results, never for model selection.'}
  r['matched_direction']={'n':int(used.sum()),'model_correct':int((np.sign(p[used])==np.sign(y[used])).sum()),'mean_correct':int((np.sign(r['baselines']['mean']['prediction'])==np.sign(y[used])).sum())}
+ matched_y=y[used];matched_ok=np.sign(p[used])==np.sign(matched_y)
+ r['matched_direction'].update({'actual_up':int((matched_y>0).sum()),'actual_down':int((matched_y<0).sum()),'always_down_correct':int((matched_y<0).sum()),'balanced_accuracy':float((matched_ok[matched_y>0].mean()+matched_ok[matched_y<0].mean())/2),'always_down_status':'Post-hoc diagnostic of class imbalance, not selected strategy or a claim of future performance.'})
  r['search_summary']={'found_days':sum(n>0 for n in e['counts']),'no_candidate_days':sum(n==0 for n in e['counts']),'one_or_two_candidate_days':sum(0<n<3 for n in e['counts']),'forecast_used_days':int(used.sum())}
  r['validation_better_count']=sum(a['validation']['mean_annual_mae_pp']<a['validation']['mean_annual_baseline_mae_pp'] for a in r['experiments'])
 
@@ -40,6 +42,9 @@ def adapt_html(html,r):
  cardhtml=''.join(f'<div class="card"><span class="caption">{a}</span><span class="value">{b}</span><small>{c}</small></div>' for a,b,c in cards)
  section('먼저 볼 결과',f'''<section><h2>먼저 볼 결과</h2><div class="cards">{cardhtml}</div><p class="notice"><b>2022~2025년 검증으로 선택한 조건은 {cfg['lookback']}일 · 유사도 98% 초과 · 평균입니다.</b> 검증 MAE는 {v['mean_annual_mae_pp']:.3f}%p, 과거 평균은 {v['mean_annual_baseline_mae_pp']:.3f}%p입니다. 48조건 중 평균 기준보다 나은 조건은 {r['validation_better_count']}개였지만 개선 폭은 작았습니다. 삼성전자의 선택 조건을 강제로 적용한 것이 아니라, 동일한 선택 규칙을 적용했습니다.</p><p>2026년 하락일 적중은 <b>{pct(m['down_recall'])}</b>, 상승·하락 균형 적중은 <b>{pct(m['balanced_sign_accuracy'])}</b>입니다. 항상 상승을 말한 결과와 같지는 않습니다. 다만 전체 방향 적중에는 평균으로 대체한 날도 포함됩니다. 실제 패턴을 사용한 {md['n']}일만 보면 모델은 {md['model_correct']}일({100*md['model_correct']/md['n']:.1f}%), 과거 평균은 {md['mean_correct']}일({100*md['mean_correct']/md['n']:.1f}%)에 방향이 맞았습니다.</p><p>20일 간격으로 겹치지 않는 첫날 기준 {nm['n']}건의 MAE는 조건 {nm['mae_pp']:.2f}%p, 평균 {nb['mae_pp']:.2f}%p입니다. 일별 MAE 개선의 20일 블록 부트스트랩 95% 구간은 <b>{bs['interval95_pp'][0]:.2f}~{bs['interval95_pp'][1]:.2f}%p</b>로 0을 포함합니다. 수익률 오차가 안정적으로 개선됐다고 확정할 근거는 부족합니다.</p><p class="muted">삼성전자 조사에서 정한 48조건과 선택 규칙을 하이닉스 가격을 받기 전에 고정했습니다. 2026년 하이닉스 결과는 조건 선택에 사용하지 않았습니다. 같은 시험 시기와 방법을 공유하는 후속 조사이며, 독립적인 실전 검증은 아닙니다. 166개의 일별 목표는 서로 겹칩니다.</p></section>''')
  body=body.replace('다만 전체 방향 적중에는 평균으로 대체한 날도 포함됩니다.',f'전체 166일의 방향 적중은 {pct(m["sign_accuracy"])}이지만 과거 평균으로 대체한 122일도 포함합니다. 이 수치는 위의 패턴 예측 적중률과 시험 대상이 다릅니다.')
+ imbalance=f'''<p class="notice"><b>61.4%만으로 좋은 예측이라고 볼 수는 없습니다.</b> 패턴으로 예측한 {md['n']}일의 실제 결과는 상승 {md['actual_up']}일·하락 {md['actual_down']}일이었습니다. 이 날짜들에서 전부 “하락”을 가정하면 {md['always_down_correct']}/{md['n']} = <b>{100*md['always_down_correct']/md['n']:.1f}%</b>가 맞습니다. 상승일과 하락일을 같은 비중으로 평가한 모델 적중률은 <b>{100*md['balanced_accuracy']:.1f}%</b>입니다. 모두 하락 비교는 결과 분포를 설명하는 사후 진단이며, 미래에도 쓸 수 있다고 검증한 전략은 아닙니다.</p>'''
+ body=body.replace('<h2>먼저 볼 결과</h2><div class="cards">'+cardhtml+'</div>', '<h2>먼저 볼 결과</h2><div class="cards">'+cardhtml+'</div>'+imbalance)
+ body=body.replace('<th>방향 적중</th><th>균형 적중</th>', '<th>전체 166일 방향</th><th>전체 166일 균형</th>')
  examples=[]
  for key,title in [('similar','같은 하락 방향으로 이어진 사례'),('opposite','닮았지만 다른 방향으로 이어진 사례')]:
   a=r['case_examples'][key]
@@ -80,6 +85,7 @@ def make_report(r):
 - 과거 후보 하나 이상 찾음 {r['search_summary']['found_days']}일, 후보 없음 {r['search_summary']['no_candidate_days']}일. 후보 1~2개 {r['search_summary']['one_or_two_candidate_days']}일은 검색 성공이지만 예측용 3개 조건 미달이다.
 - 방향 적중 {m['sign_accuracy']*100:.2f}% vs 항상 상승 {b['sign_accuracy']*100:.2f}%. 균형 적중 {m['balanced_sign_accuracy']*100:.2f}%, 하락 적중 {m['down_recall']*100:.2f}%.
 - 패턴 사용 날짜만: 방향 적중 {md['model_correct']}/{md['n']}, 동일 날짜 과거 평균 {md['mean_correct']}/{md['n']}.
+- 그 {md['n']}일의 실제 결과는 상승 {md['actual_up']}일·하락 {md['actual_down']}일. 모두 하락 가정 시 {100*md['always_down_correct']/md['n']:.2f}%가 맞는다. 모델의 패턴 사용 날짜 균형 적중은 {md['balanced_accuracy']*100:.2f}%. 모두 하락 비교는 사후 분포 설명이며 사전 선택한 전략이나 미래 성과 주장이 아니다.
 - MAE 개선의 20일 블록 부트스트랩 95% 구간 [{bs['interval95_pp'][0]:.6f}, {bs['interval95_pp'][1]:.6f}]%p. 0 포함, 선택 불확실성 전체를 포함하지 않은 탐색적 점검.
 
 같은 방향 예시: {dates[a['q']]}의 최근 {cfg['lookback']}거래일 vs {dates[a['j']]}까지의 과거 구간, 유사도 {a['cosine']*100:.2f}%. 이후 20일 과거 {a['historical_return']*100:+.2f}%, 실제 {a['actual_return']*100:+.2f}%. 경로 상관 {a['correlation']:.3f}, 경로 MAE {a['path_mae_pp']:.3f}%p. 중간 경로가 동일하다는 뜻은 아니다.
