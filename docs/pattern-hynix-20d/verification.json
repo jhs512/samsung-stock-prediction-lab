@@ -1,0 +1,13 @@
+{
+  "no_2026_selection": true,
+  "frozen_library_has_no_2026_outcomes": true,
+  "all_neighbor_episodes_nonoverlapping": true,
+  "audited_neighbor_episodes": 56640,
+  "no_synthetic_or_interpolated_prices": true,
+  "fallback_identical_to_common_mean": true,
+  "all_predictions_finite": true,
+  "independent_cosine_and_cumulative_return_recomputation": true,
+  "independent_check_signal_date": "2026-02-13",
+  "independent_check_neighbor_count": 3,
+  "test_is_followup_not_blinded": true
+}

@@ -1,0 +1,46 @@
+{
+  "purpose": "Provider sensitivity only; original Naver-selected condition is fixed, no retuning",
+  "provider": "Yahoo chart raw Close, not adjusted close",
+  "condition": {
+    "id": "w060_threshold_0.98_mean",
+    "lookback": 60,
+    "retrieval": "threshold_0.98",
+    "aggregation": "mean"
+  },
+  "rows": 1902,
+  "test_n": 166,
+  "test_first": "2026-01-02",
+  "test_last": "2026-09-04",
+  "selected_metrics": {
+    "n": 166,
+    "mae_pp": 23.53328595177265,
+    "rmse_pp": 31.986815309321987,
+    "sign_accuracy": 0.8072289156626506,
+    "balanced_sign_accuracy": 0.7072543617998164,
+    "up_recall": 0.9256198347107438,
+    "down_recall": 0.4888888888888889,
+    "actual_up_rate": 0.7289156626506024,
+    "correlation": 0.27345930352366987,
+    "brier": 0.22187330093659063,
+    "coverage": 0.25903614457831325,
+    "matched_n": 43,
+    "fallback_n": 123,
+    "matched_mae_pp": 19.02944636545121,
+    "matched_baseline_mae_pp": 20.741571963035486
+  },
+  "mean_baseline_metrics": {
+    "n": 166,
+    "mae_pp": 23.976788365604722,
+    "rmse_pp": 32.27029586977025,
+    "sign_accuracy": 0.7289156626506024,
+    "balanced_sign_accuracy": 0.5,
+    "up_recall": 1.0,
+    "down_recall": 0.0,
+    "actual_up_rate": 0.7289156626506024,
+    "correlation": null,
+    "brier": 0.22726661696269296
+  },
+  "mae_gain_pp": 0.4435024138320724,
+  "calendar_caveat": "Yahoo lacks three pre-2026 Naver dates. Each provider uses its own observed 20-session horizon; historical windows may differ. No filling or replacement.",
+  "selection_changed": false
+}

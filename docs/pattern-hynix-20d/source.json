@@ -1,0 +1,13 @@
+{
+  "provider": "Naver Finance daily OHLC",
+  "symbol": "000660",
+  "name": "SK hynix",
+  "url": "https://api.finance.naver.com/siseJson.naver?symbol=000660&requestType=1&startTime=20190101&endTime=20261007&timeframe=day",
+  "retrieved_utc": "2026-10-07T22:52:04.150428+00:00",
+  "raw_sha256": "3ebca369b4290b3b5aacef9b26c865b950d5e54393b70226bca4faba49b641de",
+  "first": "2019-01-02",
+  "last": "2026-10-07",
+  "rows": 1905,
+  "adjustment": "unspecified by API; no independent adjustment, dividend cash flows excluded",
+  "data_policy": "No interpolation; invalid, duplicate, nonpositive or inconsistent OHLC fails"
+}

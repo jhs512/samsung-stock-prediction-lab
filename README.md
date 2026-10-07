@@ -11,3 +11,7 @@ https://jhs512.github.io/samsung-stock-prediction-lab/
 https://jhs512.github.io/samsung-stock-prediction-lab/pattern-samsung-20d/
 
 2022~2025년 검증으로 조건을 선택하고 2026년을 별도로 비교했습니다. 무작위 시험 날짜, 실제 결과와 예측, 과거 유사 사례, 전체 조건 표와 재현 코드를 제공합니다.
+
+동일한 조건의 SK하이닉스 조사 보고서(과거 패턴 검색 및 같은 방향/반대 방향 사례 비교):
+
+https://jhs512.github.io/samsung-stock-prediction-lab/pattern-hynix-20d/
