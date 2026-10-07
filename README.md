@@ -1,5 +1,11 @@
 # 삼성전자 주가 예측 실험실
 
+**코사인 유사도 기반 패턴 예측법 — 최신 안내 페이지**
+
+https://jhs512.github.io/samsung-stock-prediction-lab/pattern-guide/
+
+최근 차트 → 닮은 과거 차트 → 이후 20거래일을 단계별 그래프로 설명합니다. 삼성전자·SK하이닉스 실제 사례와 검색 횟수, 투자금·정수 주·남은 현금·입력 비용을 반영한 가정 손익 계산표가 있습니다. 원자료 기준일은 2026-10-07입니다.
+
 실제 과거 자료로 기준 모델과 회귀 모델을 비교해요.
 
 https://jhs512.github.io/samsung-stock-prediction-lab/
