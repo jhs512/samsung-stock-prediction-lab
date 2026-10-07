@@ -1,5 +1,7 @@
 # 삼성전자 주가 예측 실험실
 
+**새 페이지: [2026년 유사 패턴 전체 탐색](https://jhs512.github.io/samsung-stock-prediction-lab/pattern-explorer/)** — 삼성전자·하이닉스, 기본 100거래일, 98% 초과 모든 과거 구간, 날짜·과거 사례 선택 및 랜덤 버튼, 투자금별 손익 계산.
+
 **코사인 유사도 기반 패턴 예측법 — 최신 안내 페이지**
 
 https://jhs512.github.io/samsung-stock-prediction-lab/pattern-guide/

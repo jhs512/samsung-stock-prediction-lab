@@ -1,0 +1,12 @@
+{
+  "samsung": {
+    "query_dates": 186,
+    "found_dates": 116,
+    "matching_windows": 1728
+  },
+  "hynix": {
+    "query_dates": 186,
+    "found_dates": 122,
+    "matching_windows": 1374
+  }
+}
